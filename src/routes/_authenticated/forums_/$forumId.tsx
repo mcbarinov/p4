@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { api } from "../../../api/client"
+import { LoadingSpinner } from "../../../components/ui/LoadingSpinner"
 
 export const Route = createFileRoute("/_authenticated/forums_/$forumId")({
   loader: async ({ params }) => {
@@ -12,6 +13,8 @@ export const Route = createFileRoute("/_authenticated/forums_/$forumId")({
 
     return { forum, posts }
   },
+  pendingComponent: LoadingSpinner,
+  pendingMs: 100,
   component: ForumPosts,
 })
 

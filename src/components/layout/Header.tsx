@@ -13,7 +13,7 @@ export function Header() {
   return (
     <header className="bg-gray-800 text-white p-4">
       <nav className="max-w-7xl mx-auto flex items-center justify-between">
-        <h1 className="text-xl font-bold">Forums App</h1>
+        <h1 className="text-xl font-bold">DemoForums</h1>
         <div className="flex items-center gap-4">
           <span className="text-gray-300">Welcome, {auth.user}</span>
           <Link to="/forums" className="hover:text-gray-300">

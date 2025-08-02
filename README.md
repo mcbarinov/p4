@@ -20,9 +20,11 @@ src/
 ├── api/
 │   └── client.ts          # API client with HTTP request simulation
 ├── components/
-│   └── layout/           # Shared layout components
-│       ├── Header.tsx
-│       └── Footer.tsx
+│   ├── layout/           # Shared layout components
+│   │   ├── Header.tsx
+│   │   └── Footer.tsx
+│   └── ui/              # Reusable UI components
+│       └── LoadingSpinner.tsx
 ├── routes/               # File-based routing (TanStack Router)
 │   ├── __root.tsx       # Root layout
 │   ├── _authenticated.tsx # Layout for protected routes
@@ -127,6 +129,23 @@ We use TanStack Router's loader pattern for prefetching data before component re
 - No UI jumps
 - Parallel data loading
 - Automatic error handling
+
+### Loading States
+
+To improve user experience during data fetching, we implement loading indicators:
+
+```typescript
+export const Route = createFileRoute("/path")({
+  loader: async () => {
+    // Data fetching logic
+  },
+  pendingComponent: LoadingSpinner, // Component shown while loading
+  pendingMs: 100, // Show loader after 100ms (default: 1000ms)
+  component: MyComponent,
+})
+```
+
+Example: The forum detail page (`/forums/$forumId`) shows a loading spinner when navigating between forums. This provides immediate visual feedback to users, preventing the perception that links are broken during the 200-800ms API delay.
 
 ### Component Architecture
 

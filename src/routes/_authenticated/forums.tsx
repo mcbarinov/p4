@@ -1,11 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { api } from "../../api/client"
+import { LoadingSpinner } from "../../components/ui/LoadingSpinner"
 
 export const Route = createFileRoute("/_authenticated/forums")({
   loader: async () => {
     const forums = await api.getForums()
     return { forums }
   },
+  pendingComponent: LoadingSpinner,
+  pendingMs: 100,
   component: ForumsList,
 })
 
