@@ -1,17 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router"
+import { api } from "../../api/client"
 
 export const Route = createFileRoute("/_authenticated/forums")({
+  loader: async () => {
+    const forums = await api.getForums()
+    return { forums }
+  },
   component: ForumsList,
 })
 
 function ForumsList() {
-  const forums = [
-    { id: "1", name: "General Discussion" },
-    { id: "2", name: "Tech Support" },
-    { id: "3", name: "Feature Requests" },
-    { id: "4", name: "Bug Reports" },
-    { id: "5", name: "Off-Topic" },
-  ]
+  const { forums } = Route.useLoaderData()
 
   return (
     <div>
@@ -21,10 +20,11 @@ function ForumsList() {
           <Link
             key={forum.id}
             to="/forums/$forumId"
-            params={{ forumId: forum.id }}
+            params={{ forumId: forum.id.toString() }}
             className="block p-4 bg-white rounded-lg shadow hover:shadow-md transition-shadow"
           >
             <h3 className="text-lg font-semibold">{forum.name}</h3>
+            <p className="text-sm text-gray-600 mt-1">{forum.description}</p>
           </Link>
         ))}
       </div>

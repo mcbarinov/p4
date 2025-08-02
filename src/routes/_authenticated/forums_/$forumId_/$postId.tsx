@@ -1,35 +1,27 @@
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { PostInfo } from "./-components/PostInfo"
+import { CommentItem } from "./-components/CommentItem"
+import { api } from "../../../../api/client"
 
 export const Route = createFileRoute("/_authenticated/forums_/$forumId_/$postId")({
+  loader: async ({ params }) => {
+    const postId = parseInt(params.postId)
+    const forumId = parseInt(params.forumId)
+
+    const [forum, post, comments] = await Promise.all([api.getForum(forumId), api.getPost(postId), api.getCommentsByPost(postId)])
+
+    if (!forum || !post) {
+      throw new Error("Post or forum not found")
+    }
+
+    return { forum, post, comments }
+  },
   component: PostDetail,
 })
 
 function PostDetail() {
-  const { forumId, postId } = Route.useParams()
-
-  const forumNames: Record<string, string> = {
-    "1": "General Discussion",
-    "2": "Tech Support",
-    "3": "Feature Requests",
-    "4": "Bug Reports",
-    "5": "Off-Topic",
-  }
-
-  const post = {
-    id: postId,
-    title: "Welcome to the forum!",
-    author: "admin",
-    content:
-      "This is a sample post content. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    timestamp: "2024-01-15 10:30 AM",
-  }
-
-  const comments = [
-    { id: "1", author: "user1", content: "Great post! Thanks for sharing.", timestamp: "2024-01-15 11:00 AM" },
-    { id: "2", author: "user2", content: "I have a question about this topic.", timestamp: "2024-01-15 11:30 AM" },
-    { id: "3", author: "user3", content: "Looking forward to more posts like this!", timestamp: "2024-01-15 12:00 PM" },
-  ]
+  const { forumId } = Route.useParams()
+  const { forum, post, comments } = Route.useLoaderData()
 
   return (
     <div>
@@ -39,22 +31,16 @@ function PostDetail() {
         </Link>
         <span>/</span>
         <Link to="/forums/$forumId" params={{ forumId }} className="text-blue-600 hover:underline">
-          {forumNames[forumId] || `Forum ${forumId}`}
+          {forum.name}
         </Link>
       </div>
 
       <PostInfo post={post} />
 
       <div className="space-y-4">
-        <h2 className="text-xl font-bold">Comments</h2>
+        <h2 className="text-xl font-bold">Comments ({comments.length})</h2>
         {comments.map((comment) => (
-          <div key={comment.id} className="bg-white rounded-lg shadow p-4">
-            <div className="flex justify-between items-start mb-2">
-              <span className="font-semibold">{comment.author}</span>
-              <span className="text-sm text-gray-600">{comment.timestamp}</span>
-            </div>
-            <p className="text-gray-700">{comment.content}</p>
-          </div>
+          <CommentItem key={comment.id} comment={comment} />
         ))}
       </div>
     </div>
