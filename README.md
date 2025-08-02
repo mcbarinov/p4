@@ -1,69 +1,143 @@
-# React + TypeScript + Vite
+# DemoForums
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A demonstration forum application built with modern React and TypeScript stack.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React 19** - UI library
+- **TypeScript** - Static typing
+- **TanStack Router** - File-based routing with loader support
+- **Tailwind CSS v4** - Utility-first CSS framework
+- **Vite** - Fast bundler and dev server
+- **ESLint + Prettier** - Code linting and formatting
 
-## Expanding the ESLint configuration
+## Project Architecture
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Folder Structure
 
-```js
-export default tseslint.config([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+├── api/
+│   └── client.ts          # API client with HTTP request simulation
+├── components/
+│   └── layout/           # Shared layout components
+│       ├── Header.tsx
+│       └── Footer.tsx
+├── routes/               # File-based routing (TanStack Router)
+│   ├── __root.tsx       # Root layout
+│   ├── _authenticated.tsx # Layout for protected routes
+│   ├── index.tsx        # Home page
+│   ├── login.tsx        # Login page
+│   └── _authenticated/
+│       ├── forums.tsx   # Forums list
+│       └── forums_/
+│           ├── $forumId.tsx      # Forum posts
+│           └── $forumId_/
+│               ├── $postId.tsx   # Post details
+│               └── -components/  # Route-local components
+│                   ├── PostInfo.tsx
+│                   └── CommentItem.tsx
+├── types.ts             # Shared TypeScript types
+├── auth.tsx            # Authentication context
+├── router.ts           # Router configuration
+├── App.tsx             # Main app component (required for React Fast Refresh)
+└── main.tsx           # Application entry point
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### File Creation Rules
 
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x"
-import reactDom from "eslint-plugin-react-dom"
+1. **Routes** - Files in `routes/` folder automatically become routes
+   - `_` prefix = layout route
+   - `$` = dynamic segment
+   - `-components/` = local components for the route
 
-export default tseslint.config([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs["recommended-typescript"],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
+2. **Components** - Functional components with TypeScript
+   - Naming: PascalCase
+   - One component per file
+   - Props typed via interface
+
+3. **Types** - Centralized in `types.ts`
+   - Use `interface` for objects
+   - Use `type` for union types
+
+## Key Features
+
+### File-based Routing with Loaders
+
+Each route can have a `loader` function for data prefetching:
+
+```typescript
+export const Route = createFileRoute("/path")({
+  loader: async () => {
+    const data = await api.getData()
+    return { data }
   },
-])
+  component: MyComponent,
+})
 ```
+
+### API Client with Simulation
+
+The API client (`src/api/client.ts`) simulates real HTTP requests:
+
+- Random delay 200-800ms
+- Hardcoded data
+- Ready to be replaced with real API
+
+### Protected Routes
+
+Routes under `_authenticated/` require authentication. Unauthorized users are redirected to `/login`.
+
+## Route Structure
+
+- `/` - Home page (redirects to `/forums`)
+- `/login` - Login page
+- `/forums` - All forums list
+- `/forums/:forumId` - Specific forum posts
+- `/forums/:forumId/:postId` - Post details with comments
+
+## Development Commands
+
+```bash
+# Install dependencies
+pnpm install
+
+# Start dev server (port 3000)
+pnpm run dev
+
+# Build for production
+pnpm run build
+
+# Preview production build
+pnpm run preview
+
+# Linting
+pnpm run lint
+
+# Code formatting
+pnpm run format
+```
+
+## Patterns and Conventions
+
+### Data Loading
+
+We use TanStack Router's loader pattern for prefetching data before component render. This provides:
+
+- No UI jumps
+- Parallel data loading
+- Automatic error handling
+
+### Component Architecture
+
+- **Global components** - in `src/components/`
+- **Route-local components** - in `-components/` folder next to the route
+- **Layout components** - use `<Outlet />` for nested routes
+
+### Styling
+
+Using Tailwind CSS utility classes:
+
+- No separate CSS files (except `index.css`)
+- Components are self-contained with their styles
+- Consistent design through Tailwind classes
