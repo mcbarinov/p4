@@ -47,7 +47,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(getStoredUser())
   }, [])
 
-  return <AuthContext value={{ isAuthenticated, user, login, logout }}>{children}</AuthContext>
+  const value = React.useMemo(() => ({ isAuthenticated, user, login, logout }), [isAuthenticated, user, login, logout])
+
+  return <AuthContext value={value}>{children}</AuthContext>
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
