@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router"
+import { PostInfo } from "./-components/PostInfo"
 
 export const Route = createFileRoute("/_authenticated/forums_/$forumId_/$postId")({
   component: PostDetail,
@@ -42,15 +43,7 @@ function PostDetail() {
         </Link>
       </div>
 
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
-        <h1 className="text-2xl font-bold mb-2">{post.title}</h1>
-        <div className="text-sm text-gray-600 mb-4">
-          by {post.author} • {post.timestamp}
-        </div>
-        <div className="prose max-w-none">
-          <p>{post.content}</p>
-        </div>
-      </div>
+      <PostInfo post={post} />
 
       <div className="space-y-4">
         <h2 className="text-xl font-bold">Comments</h2>

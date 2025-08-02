@@ -1,5 +1,6 @@
-import { createFileRoute, Link, Outlet, redirect, useNavigate } from "@tanstack/react-router"
-import { useAuth } from "../auth"
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router"
+import { Header } from "../components/layout/Header"
+import { Footer } from "../components/layout/Footer"
 
 export const Route = createFileRoute("/_authenticated")({
   beforeLoad: ({ context, location }) => {
@@ -17,30 +18,9 @@ export const Route = createFileRoute("/_authenticated")({
 })
 
 function AuthLayout() {
-  const auth = useAuth()
-  const navigate = useNavigate()
-
-  const handleLogout = async () => {
-    await auth.logout()
-    await navigate({ to: "/login", search: { redirect: undefined } })
-  }
-
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="bg-gray-800 text-white p-4">
-        <nav className="max-w-7xl mx-auto flex items-center justify-between">
-          <h1 className="text-xl font-bold">Forums App</h1>
-          <div className="flex items-center gap-4">
-            <span className="text-gray-300">Welcome, {auth.user}</span>
-            <Link to="/forums" className="hover:text-gray-300">
-              Forums
-            </Link>
-            <button type="button" onClick={() => void handleLogout()} className="hover:text-gray-300">
-              Logout
-            </button>
-          </div>
-        </nav>
-      </header>
+      <Header />
 
       <main className="flex-1 bg-gray-50">
         <div className="max-w-7xl mx-auto p-4">
@@ -48,9 +28,7 @@ function AuthLayout() {
         </div>
       </main>
 
-      <footer className="bg-gray-800 text-white p-4 text-center">
-        <p className="text-sm text-gray-400">© 2024 Forums App</p>
-      </footer>
+      <Footer />
     </div>
   )
 }

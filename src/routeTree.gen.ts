@@ -13,8 +13,8 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedForumsRouteImport } from './routes/_authenticated/forums'
-import { Route as AuthenticatedForumsForumIdRouteImport } from './routes/_authenticated/forums_.$forumId'
-import { Route as AuthenticatedForumsForumIdPostIdRouteImport } from './routes/_authenticated/forums_.$forumId_.$postId'
+import { Route as AuthenticatedForumsForumIdRouteImport } from './routes/_authenticated/forums_/$forumId'
+import { Route as AuthenticatedForumsForumIdPostIdRouteImport } from './routes/_authenticated/forums_/$forumId_/$postId'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
